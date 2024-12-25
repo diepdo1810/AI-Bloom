@@ -2,6 +2,7 @@ import { kv } from "@vercel/kv";
 import { notFound } from "next/navigation";
 import FormRSC from "@/components/form-rsc";
 import { Metadata } from "next";
+import ResultsClient from "@/components/ResultsClient";
 
 export async function generateMetadata({
   params,
@@ -10,28 +11,34 @@ export async function generateMetadata({
     id: string;
   };
 }): Promise<Metadata | undefined> {
-  const data = await kv.hgetall<{ prompt: string; image?: string }>(params.id);
-  if (!data) {
-    return;
+  try {
+    const data = await kv.hgetall<{ prompt: string; image?: string }>(
+      params.id,
+    );
+
+    const title = `Spirals: ${data?.prompt}`;
+    const description = `A spiral generated from the prompt: ${data?.prompt}`;
+    if (!data) {
+      return;
+    }
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        creator: "@steventey",
+      },
+    };
+  } catch (error) {
+    console.error(error);
   }
-
-  const title = `Spirals: ${data.prompt}`;
-  const description = `A spiral generated from the prompt: ${data.prompt}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@steventey",
-    },
-  };
 }
 
 export default async function Results({
@@ -41,20 +48,18 @@ export default async function Results({
     id: string;
   };
 }) {
-  const data = await kv.hgetall<{
-    prompt: string;
-    pattern?: string;
-    image?: string;
-  }>(params.id);
+  try {
+    const data = await kv.hgetall<{ prompt: string; image?: string }>(
+      params.id,
+    );
 
-  if (!data) {
-    notFound();
+    if (!data) {
+      notFound();
+    }
+    return <FormRSC prompt={data.prompt} image={data.image || null} />;
+  } catch (error) {
+    console.error(error);
+
+    return <ResultsClient id={params.id} />;
   }
-  return (
-    <FormRSC
-      prompt={data.prompt}
-      {...(data?.pattern && { pattern: data.pattern })}
-      image={data.image || null}
-    />
-  );
 }

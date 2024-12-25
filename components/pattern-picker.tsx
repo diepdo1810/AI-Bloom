@@ -1,13 +1,21 @@
 import { UploadCloud } from "lucide-react";
-import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
+import { Dalle, Midjourney, Flux, Pollinations } from "@lobehub/icons";
 
 const patterns = [
-  "https://xd2kcvzsdpeyx1gu.public.blob.vercel-storage.com/8uiaWqu-77Maq6Zn38dfz9iWwXsyaheFfOSJPL.png",
-  "https://xd2kcvzsdpeyx1gu.public.blob.vercel-storage.com/vercel-RaEAI0uDphGrSl0a7lCcNhdKO7dNKT.png",
-  "https://xd2kcvzsdpeyx1gu.public.blob.vercel-storage.com/react-58b3JHEzb6qWG20KYl944yW7V72CGo.png",
-  "https://xd2kcvzsdpeyx1gu.public.blob.vercel-storage.com/logo-wfAh7QadApCiJ1tu7EVOsILwGBQ1wz.png",
+  {
+    name: "midjourney",
+    image: <Midjourney.Combine size={20} type={"color"} />,
+  },
+  {
+    name: "dall-e-3",
+    image: <Dalle.Combine size={20} type={"color"} />,
+  },
+  {
+    name: "flux",
+    image: <Flux.Combine size={20} type={"color"} />,
+  },
 ];
 
 export default function PatternPicker({
@@ -23,33 +31,26 @@ export default function PatternPicker({
     <div className="w-full overflow-auto md:max-w-xl">
       <div className="p-4">
         <p className="py-2 font-display text-xl text-gray-700">
-          Choose a pattern
+          <Pollinations.Combine size={56} />
         </p>
         <div className="grid grid-cols-4 gap-3">
           {patterns.map((p) => (
             <button
-              key={p}
+              key={p.name}
               type="button"
               onClick={() => {
-                setPattern(p);
+                setPattern(p.name);
                 setOpenPopover(false);
               }}
               className="rounded-md border border-gray-300 p-2 transition-all hover:border-gray-500"
             >
-              <Image
-                src={p}
-                alt={p}
-                width={400}
-                height={400}
-                className="object-cover"
-                unoptimized
-              />
+              {p.image}
             </button>
           ))}
         </div>
       </div>
       <div className="border-t border-gray-300" />
-      <div className="flex items-center justify-between p-4">
+      <div className="flex hidden items-center justify-between p-4">
         <div className="flex-1">
           <p className="font-display text-xl text-gray-700">Upload your own</p>
           <p className="py-2 text-sm text-gray-500">

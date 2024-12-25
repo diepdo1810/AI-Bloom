@@ -1,19 +1,10 @@
-<a href="https://spirals.vercel.app">
-  <img alt="Spirals – Generate beautiful AI spiral art with one click." src="/app/opengraph-image.png">
-  <h1 align="center">Spirals</h1>
+<a href="https://aibloom.vercel.app">
+  <img alt="AI Bloom – Generate mesmerizing AI spiral art with one click." src="/app/opengraph-image.png">
+  <h1 align="center">AI Bloom</h1>
 </a>
 
 <p align="center">
-  Generate beautiful AI spiral art with one click. Powered by Vercel and Replicate.
-</p>
-
-<p align="center">
-  <a href="https://twitter.com/steventey">
-    <img src="https://img.shields.io/twitter/follow/steventey?style=flat&label=steventey&logo=twitter&color=0bf&logoColor=fff" alt="Steven Tey Twitter follower count" />
-  </a>
-  <a href="https://github.com/steven-tey/spirals">
-    <img src="https://img.shields.io/github/stars/steven-tey/spirals?label=steven-tey%2Fspirals" alt="Spirals repo star count" />
-  </a>
+  Generate mesmerizing AI spiral art with one click. Powered by Vercel and Pollinations.
 </p>
 
 <p align="center">
@@ -26,31 +17,31 @@
 
 ## Introduction
 
-Spirals is an AI app for you to generate beautiful spiral art with one click. Powered by Vercel and Replicate.
-
-https://github.com/steven-tey/spirals/assets/28986134/9f0202d4-2a31-47a0-b43f-bdcd189743ef
+**AI Bloom** is an AI-powered application that allows you to create mesmerizing spiral art inspired by nature and technology with just one click. The app leverages the power of **Vercel** and **Pollinations** to deliver dynamic, creative visuals.
 
 ## Tech Stack
 
-- Next.js [App Router](https://nextjs.org/docs/app)
-- Next.js [Server Actions](https://nextjs.org/docs/app/api-reference/functions/server-actions)
+- [Next.js App Router](https://nextjs.org/docs/app)
+- [Next.js Server Actions](https://nextjs.org/docs/app/api-reference/functions/server-actions)
 - [Bun](https://bun.sh/) for compilation
 - [Vercel Blob](https://vercel.com/storage/blob) for image storage
 - [Vercel KV](https://vercel.com/storage/kv) for redis
 - [`promptmaker`](https://github.com/zeke/promptmaker) lib by @zeke for generating random prompts
+- [Pollinations API](https://pollinations.ai/) for AI-powered art generation
 
 ## Deploy Your Own
 
 You can deploy this template to Vercel with the button below:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://stey.me/spirals-deploy)
+[![Deploy with Vercel](https://vercel.com/button)](https://stey.me/aibloom-deploy)
 
-Note that you'll need to:
+### Setup Instructions:
 
-- Set up a [Replicate](https://replicate.com) account to get the `REPLICATE_API_TOKEN` env var.
-- Set up [Vercel KV](https://vercel.com/docs/storage/vercel-kv/quickstart) to get the
-- Set up [Vercel Blob](https://vercel.com/docs/storage/vercel-blob/quickstart)
+1. Set up **Pollinations API** no key required.
+2. Configure environment variables in Vercel:
+    - `VERCEL_KV_URL`: For redis storage.
+    - `VERCEL_BLOB_URL`: For image storage.
 
 ## Author
 
-- Steven Tey ([@steventey](https://twitter.com/steventey))
+- Diep Do ([@diepdo](https://github.com/diepdo1810))

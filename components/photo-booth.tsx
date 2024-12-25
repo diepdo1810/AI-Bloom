@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { LoadingCircle } from "@/components/icons";
 import { useParams, useRouter } from "next/navigation";
 import va from "@vercel/analytics";
+import { usePollinationsImage } from "@pollinations/react";
 
 function forceDownload(blobUrl: string, filename: string) {
   let a: any = document.createElement("a");
@@ -16,40 +17,67 @@ function forceDownload(blobUrl: string, filename: string) {
   a.remove();
 }
 
-export default function PhotoBooth({ image }: { image: string | null }) {
+interface PhotoBoothProps {
+  image?: string;
+  prompt?: string;
+  pattern?: string;
+}
+
+export default function PhotoBooth({
+  image,
+  prompt,
+  pattern,
+}: PhotoBoothProps) {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
   const [copying, setCopying] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const pollinationsImage = usePollinationsImage(prompt || "", {
+    width: 1280,
+    height: 1280,
+    seed: 42,
+    model: pattern,
+    nologo: true,
+    enhance: false,
+  });
+
+  const finalImage = image || pollinationsImage;
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    if (finalImage) {
+      setIsLoading(false);
+    }
+  }, [finalImage]);
 
-    if (!image) {
+  useEffect(() => {
+    let interval: number;
+
+    if (!finalImage) {
       interval = setInterval(() => {
         router.refresh();
       }, 1000);
     }
-
     return () => clearInterval(interval);
-  }, [image, router]);
+  }, [finalImage, router]);
 
   return (
     <div
       className="group relative mx-auto mt-6 aspect-square w-full max-w-xl animate-fade-up overflow-hidden rounded-2xl border border-gray-200 opacity-0"
       style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
     >
-      {id && image && (
+      {id && finalImage && !isLoading && (
         <div className="absolute right-5 top-5 z-10 flex space-x-2">
           <button
             onClick={() => {
               setCopying(true);
               va.track("copy image", {
-                image,
+                finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(image, {
+              fetch(finalImage, {
                 headers: new Headers({
                   Origin: location.origin,
                 }),
@@ -79,10 +107,10 @@ export default function PhotoBooth({ image }: { image: string | null }) {
             onClick={() => {
               setDownloading(true);
               va.track("download image", {
-                image,
+                finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(image, {
+              fetch(finalImage, {
                 headers: new Headers({
                   Origin: location.origin,
                 }),
@@ -106,16 +134,7 @@ export default function PhotoBooth({ image }: { image: string | null }) {
           </button>
         </div>
       )}
-      {image ? (
-        <Image
-          alt="output image"
-          src={image}
-          width={1280}
-          height={1280}
-          className="h-full object-cover"
-          unoptimized
-        />
-      ) : (
+      {isLoading ? (
         <div className="z-10 flex h-full w-full flex-col items-center bg-white pt-[140px] sm:pt-[280px]">
           <LoadingCircle />
           {id && (
@@ -124,11 +143,22 @@ export default function PhotoBooth({ image }: { image: string | null }) {
               style={{ animationDelay: "0.5s", animationFillMode: "forwards" }}
             >
               <p className="text-sm text-gray-500">
-                This can take anywhere between 20s-30s to run.
+                Generating your image... This can take 20-30 seconds.
               </p>
             </div>
           )}
         </div>
+      ) : (
+        <>
+          <Image
+            alt="output image"
+            src={finalImage}
+            width={1280}
+            height={1280}
+            className="h-full object-cover"
+            unoptimized
+          />
+        </>
       )}
     </div>
   );

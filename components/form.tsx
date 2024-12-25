@@ -11,11 +11,11 @@ import { useRouter } from "next/navigation";
 import va from "@vercel/analytics";
 // @ts-ignore
 import promptmaker from "promptmaker";
-import Image from "next/image";
 import Popover from "./popover";
 import { DEFAULT_PATTERN } from "@/lib/constants";
 import PatternPicker from "./pattern-picker";
-import { toast } from "sonner";
+import { Dalle, Midjourney, Flux } from "@lobehub/icons";
+import { useImageStore } from "@/stores";
 
 export default function Form({
   promptValue,
@@ -47,23 +47,19 @@ export default function Form({
   const [pattern, setPattern] = useState(patternValue || DEFAULT_PATTERN);
   const [openPopover, setOpenPopover] = useState(false);
 
-  const onChangePicture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      if (file.size / 1024 / 1024 > 5) {
-        toast.error("File size too big (max 5MB)");
-      } else if (file.type !== "image/png" && file.type !== "image/jpeg") {
-        toast.error("File type not supported (.png or .jpg only)");
-      } else {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setPattern(e.target?.result as string);
-          setOpenPopover(false);
-        };
-        reader.readAsDataURL(file);
-      }
+  const handlePatten = (p: string) => {
+    if (p === "midjourney") {
+      return <Midjourney size={56} />;
+    }
+    if (p === "dall-e-3") {
+      return <Dalle size={56} />;
+    }
+    if (p === "flux") {
+      return <Flux size={56} />;
     }
   };
+
+  const { create } = useImageStore();
 
   return (
     <form
@@ -75,11 +71,18 @@ export default function Form({
           prompt: prompt,
         });
         generate(data).then((id) => {
+          create({
+            id,
+            prompt: prompt,
+            image: null,
+            pattern: pattern,
+            generating: false,
+          });
           router.push(`/t/${id}`);
         });
       }}
     >
-      <input className="hidden" name="patternUrl" value={pattern} readOnly />
+      <input className="hidden" name="pattern" value={pattern} readOnly />
       <Popover
         content={
           <PatternPicker
@@ -95,24 +98,9 @@ export default function Form({
           onClick={() => setOpenPopover((prev) => !prev)}
           className="cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-100 active:bg-gray-200 sm:p-2"
         >
-          <Image
-            src={pattern}
-            alt="Pattern"
-            width={50}
-            height={50}
-            className="h-4 w-4 sm:h-5 sm:w-5"
-            unoptimized
-          />
+          {handlePatten(pattern)}
         </button>
       </Popover>
-      <input
-        id="patternFile"
-        name="patternFile"
-        type="file"
-        accept="image/*"
-        className="sr-only"
-        onChange={onChangePicture}
-      />
       <textarea
         id="prompt"
         name="prompt"

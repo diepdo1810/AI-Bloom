@@ -25,7 +25,7 @@
 - [Next.js Server Actions](https://nextjs.org/docs/app/api-reference/functions/server-actions)
 - [Bun](https://bun.sh/) for compilation
 - [Vercel Blob](https://vercel.com/storage/blob) for image storage
-- [Vercel KV](https://vercel.com/storage/kv) for redis
+- ~~[Vercel KV](https://vercel.com/storage/kv) for redis~~
 - [`promptmaker`](https://github.com/zeke/promptmaker) lib by @zeke for generating random prompts
 - [Pollinations API](https://pollinations.ai/) for AI-powered art generation
 
@@ -39,7 +39,7 @@ You can deploy this template to Vercel with the button below:
 
 1. Set up **Pollinations API** no key required.
 2. Configure environment variables in Vercel:
-    - `VERCEL_KV_URL`: For redis storage.
+    - ~~`VERCEL_KV_URL`: For redis storage.~~
     - `VERCEL_BLOB_URL`: For image storage.
 
 ## Author

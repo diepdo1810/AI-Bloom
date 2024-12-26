@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 import { persist } from "zustand/middleware";
 
 // interface image
@@ -104,6 +104,7 @@ export const useImageStore = create<ImageStore>()(
           return { images: rest };
         });
       },
+      getState: () => get(),
     }),
     {
       name: "image-store",

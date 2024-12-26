@@ -1,3 +1,5 @@
+"use client";
+
 import Form from "@/components/form";
 import { Twitter } from "@/components/icons";
 import PhotoBooth from "@/components/photo-booth";
@@ -11,7 +13,7 @@ export default function FormRSC({
 }: {
   prompt?: string;
   pattern?: string;
-  image: string | null;
+  image: string
 }) {
   return (
     <div className="z-10 w-full max-w-xl px-2.5 xl:px-0">
@@ -57,7 +59,7 @@ export default function FormRSC({
         .
       </p>
       <Form promptValue={prompt} patternValue={pattern} />
-      <Suspense fallback={<CountDisplay />}>
+      <Suspense>
         <GeneratedCount />
       </Suspense>
       <PhotoBooth image={image} prompt={prompt} pattern={pattern} />

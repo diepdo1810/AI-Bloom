@@ -1,14 +1,9 @@
-import { nFormatter } from "@/lib/utils";
-import { kv } from "@vercel/kv";
+"use client";
 
-export async function GeneratedCount() {
-  try {
-    const count = await kv.dbsize();
-    return <CountDisplay count={count} />;
-  } catch (error) {
-    console.error(error);
-    return <CountDisplay />;
-  }
+import { nFormatter } from "@/lib/utils";
+
+export function GeneratedCount({ count }: { count?: number }) {
+  return <CountDisplay count={count} />;
 }
 
 export const CountDisplay = ({ count }: { count?: number }) => {

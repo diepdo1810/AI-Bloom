@@ -7,6 +7,7 @@ import { LoadingCircle } from "@/components/icons";
 import { useParams, useRouter } from "next/navigation";
 import va from "@vercel/analytics";
 import { usePollinationsImage } from "@pollinations/react";
+import {toast} from "sonner";
 
 function forceDownload(blobUrl: string, filename: string) {
   let a: any = document.createElement("a");
@@ -39,12 +40,14 @@ export default function PhotoBooth({
     width: 1280,
     height: 1280,
     seed: 42,
-    model: pattern,
+    model: pattern || "midjourney",
     nologo: true,
     enhance: false,
   });
 
   const finalImage = image || pollinationsImage;
+
+  const urlImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt || '')}`;
 
   useEffect(() => {
     if (finalImage) {
@@ -77,20 +80,16 @@ export default function PhotoBooth({
                 finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(finalImage, {
+              fetch(urlImage, {
                 headers: new Headers({
                   Origin: location.origin,
                 }),
                 mode: "cors",
               })
-                .then((response) => response.blob())
-                .then((blob) => {
-                  let blobUrl = window.URL.createObjectURL(blob);
-                  navigator.clipboard.write([
-                    new ClipboardItem({
-                      "image/png": blob,
-                    }),
-                  ]);
+                .then((response) => {
+                  const url = response.url;
+                  navigator.clipboard.writeText(url);
+                  toast("Image URL copied to clipboard");
                   setCopying(false);
                 })
                 .catch((e) => console.error(e));
@@ -110,7 +109,7 @@ export default function PhotoBooth({
                 finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(finalImage, {
+              fetch(urlImage, {
                 headers: new Headers({
                   Origin: location.origin,
                 }),

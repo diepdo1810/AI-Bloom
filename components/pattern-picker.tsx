@@ -1,3 +1,5 @@
+"use client";
+
 import { UploadCloud } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";

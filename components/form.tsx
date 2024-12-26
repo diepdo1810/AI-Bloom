@@ -4,7 +4,7 @@ import { generate } from "@/lib/actions";
 import useEnterSubmit from "@/lib/hooks/use-enter-submit";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+import { useFormStatus  } from "react-dom";
 import { LoadingCircle } from "./icons";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,6 @@ import promptmaker from "promptmaker";
 import Popover from "./popover";
 import { DEFAULT_PATTERN } from "@/lib/constants";
 import PatternPicker from "./pattern-picker";
-import { Dalle, Midjourney, Flux } from "@lobehub/icons";
 import { useImageStore } from "@/stores";
 
 export default function Form({
@@ -47,30 +46,22 @@ export default function Form({
   const [pattern, setPattern] = useState(patternValue || DEFAULT_PATTERN);
   const [openPopover, setOpenPopover] = useState(false);
 
-  const handlePatten = (p: string) => {
-    if (p === "midjourney") {
-      return <Midjourney size={56} />;
-    }
-    if (p === "dall-e-3") {
-      return <Dalle size={56} />;
-    }
-    if (p === "flux") {
-      return <Flux size={56} />;
-    }
-  };
-
   const { create } = useImageStore();
+
+  const handlePatten = (pattern: string) => {
+    return pattern === "spiral"
+  }
 
   return (
     <form
       ref={formRef}
       className="mx-auto mt-6 flex w-full max-w-xl animate-fade-up items-center space-x-2 rounded-lg border border-gray-200 bg-white px-1 py-2 opacity-0 shadow-md sm:px-2 sm:py-4"
       style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
-      action={(data) => {
+      action={() => {
         va.track("generate prompt", {
           prompt: prompt,
         });
-        generate(data).then((id) => {
+        generate().then((id) => {
           create({
             id,
             prompt: prompt,
@@ -83,24 +74,7 @@ export default function Form({
       }}
     >
       <input className="hidden" name="pattern" value={pattern} readOnly />
-      <Popover
-        content={
-          <PatternPicker
-            setPattern={setPattern}
-            setOpenPopover={setOpenPopover}
-          />
-        }
-        openPopover={openPopover}
-        setOpenPopover={setOpenPopover}
-      >
-        <button
-          type="button"
-          onClick={() => setOpenPopover((prev) => !prev)}
-          className="cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-100 active:bg-gray-200 sm:p-2"
-        >
-          {handlePatten(pattern)}
-        </button>
-      </Popover>
+
       <textarea
         id="prompt"
         name="prompt"

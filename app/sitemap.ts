@@ -4,7 +4,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: "https://spirals.vercel.app",
+      url: "https://ai-bloom.vercel.app/",
       lastModified: new Date().toISOString(),
     },
   ];

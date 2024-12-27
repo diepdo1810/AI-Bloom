@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import va from "@vercel/analytics";
 import { usePollinationsImage } from "@pollinations/react";
 import {toast} from "sonner";
+import {POLLINATIONS_URL_IMAGE} from "@/lib/constants";
 
 function forceDownload(blobUrl: string, filename: string) {
   let a: any = document.createElement("a");
@@ -47,7 +48,7 @@ export default function PhotoBooth({
 
   const finalImage = image || pollinationsImage;
 
-  const urlImage = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt || '')}`;
+  const urlImage = `${POLLINATIONS_URL_IMAGE}/prompt/${encodeURIComponent(prompt || '')}`;
 
   useEffect(() => {
     if (finalImage) {

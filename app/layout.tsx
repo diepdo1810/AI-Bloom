@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: "AI Bloom",
   description:
     "Transform your creative ideas into stunning artworks with just one click. Powered by Vercel and Pollinations.",
-  metadataBase: new URL("https://spirals.vercel.app"),
+  metadataBase: new URL("https://ai-bloom.vercel.app/"),
 };
 
 export default function RootLayout({
@@ -97,7 +97,7 @@ export default function RootLayout({
                 </svg>
               </a>
               <a
-                href="https://github.com/steven-tey/spirals"
+                href="https://github.com/diepdo1810/AI-Bloom"
                 target="_blank"
                 rel="noopener noreferrer"
               >

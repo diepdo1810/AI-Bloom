@@ -2,13 +2,12 @@
 
 import { Copy, Download } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { LoadingCircle } from "@/components/icons";
 import { useParams, useRouter } from "next/navigation";
 import va from "@vercel/analytics";
 import { usePollinationsImage } from "@pollinations/react";
 import {toast} from "sonner";
-import {POLLINATIONS_URL_IMAGE} from "@/lib/constants";
 
 function forceDownload(blobUrl: string, filename: string) {
   let a: any = document.createElement("a");
@@ -35,7 +34,8 @@ export default function PhotoBooth({
   const { id } = params;
   const [copying, setCopying] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!image);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const pollinationsImage = usePollinationsImage(prompt || "", {
     width: 1280,
@@ -48,7 +48,10 @@ export default function PhotoBooth({
 
   const finalImage = image || pollinationsImage;
 
-  const urlImage = `${POLLINATIONS_URL_IMAGE}/prompt/${encodeURIComponent(prompt || '')}`;
+  const imageUrl = useMemo(() => {
+    const params = new URLSearchParams({ width: 1280, height: 1280, model: pattern || "midjourney", seed: 42, nologo: true, enhance: false });
+    return `https://pollinations.ai/p/${encodeURIComponent(prompt || "")}?${params.toString()}`;
+  }, [prompt, pattern]);
 
   useEffect(() => {
     if (finalImage) {
@@ -81,15 +84,14 @@ export default function PhotoBooth({
                 finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(urlImage, {
+              fetch(imageUrl, {
                 headers: new Headers({
                   Origin: location.origin,
                 }),
-                mode: "cors",
+                mode: "no-cors",
               })
-                .then((response) => {
-                  const url = response.url;
-                  navigator.clipboard.writeText(url);
+                .then(() => {
+                  navigator.clipboard.writeText(imageUrl);
                   toast("Image URL copied to clipboard");
                   setCopying(false);
                 })
@@ -110,21 +112,8 @@ export default function PhotoBooth({
                 finalImage,
                 page: `https://spirals.vercel.app/t/${id}`,
               });
-              fetch(urlImage, {
-                headers: new Headers({
-                  Origin: location.origin,
-                }),
-                mode: "cors",
-              })
-                .then((response) => response.blob())
-                .then((blob) => {
-                  let blobUrl = window.URL.createObjectURL(blob);
-                  forceDownload(blobUrl, `${id || "demo"}.png`);
-                  setDownloading(false);
-                })
-                .catch((e) => console.error(e));
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm transition-all hover:scale-105 active:scale-95"
+            className="hidden flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm transition-all hover:scale-105 active:scale-95"
           >
             {downloading ? (
               <LoadingCircle />
@@ -156,6 +145,7 @@ export default function PhotoBooth({
             width={1280}
             height={1280}
             className="h-full object-cover"
+            onLoad={() => setImageLoaded(true)}
             unoptimized
           />
         </>

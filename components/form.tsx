@@ -48,9 +48,17 @@ export default function Form({
 
   const { create } = useImageStore();
 
-  const handlePatten = (pattern: string) => {
-    return pattern === "spiral"
-  }
+  const handlePatten = (p: string) => {
+    if (p === "midjourney") {
+     return <img style={{height: 56 + 'px'}} src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/midjourney.svg" alt="midjourney"/>
+    }
+    if (p === "dall-e-3") {
+      return <img style={{height: 56 + 'px'}} src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/dalle.svg" alt="dalle"/>
+    }
+    if (p === "flux") {
+      return <img style={{height: 56 + 'px'}} src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/flux.svg" alt="flux"/>
+    }
+  };
 
   return (
     <form
@@ -74,6 +82,19 @@ export default function Form({
       }}
     >
       <input className="hidden" name="pattern" value={pattern} readOnly />
+      <Popover
+          content={<PatternPicker setPattern={setPattern} setOpenPopover={setOpenPopover} patternValue={pattern} />}
+          openPopover={openPopover}
+          setOpenPopover={setOpenPopover}
+      >
+        <button
+            type="button"
+            onClick={() => setOpenPopover((prev) => !prev)}
+            className="cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-100 active:bg-gray-200 sm:p-2"
+        >
+          {handlePatten(pattern)}
+        </button>
+      </Popover>
 
       <textarea
         id="prompt"
